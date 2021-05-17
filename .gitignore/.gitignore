@@ -1,0 +1,81 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+df=pd.read_csv('Iris.csv')
+df.head()
+
+df.info()
+sns.countplot(x='Species',data=df)
+
+plt.figure(figsize=(10,6))
+sns.scatterplot(x='SepalLengthCm',y='PetalLengthCm',data=df,hue='Species',palette='Dark2')
+
+plt.figure(figsize=(10,6))
+sns.scatterplot(x='SepalWidthCm',y='PetalWidthCm',data=df,hue='Species',palette='Dark2')
+
+sns.pairplot(df,hue='Species',palette='Dark2')
+
+df=df.drop('Id',axis=1)
+
+df.head()
+
+df['Species'].value_counts()
+
+Species=pd.get_dummies(df['Species'])
+
+df=pd.concat([df,Species],axis=1)
+
+df.head()
+
+df=df.drop('Species',axis=1)
+
+df.head()
+
+
+x=df[['SepalLengthCm','SepalWidthCm','PetalLengthCm','PetalWidthCm']]
+
+y=df[['Iris-setosa','Iris-versicolor','Iris-virginica']]
+
+
+from sklearn.model_selection import train_test_split
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=101)
+
+from sklearn.tree import DecisionTreeClassifier
+
+dtree = DecisionTreeClassifier()
+
+dtree.fit(x_train,y_train)
+
+predictions = dtree.predict(x_test)
+
+from sklearn.metrics import classification_report,confusion_matrix
+
+print(classification_report(y_test,predictions))
+
+confusion_matrix(y_test.values.argmax(axis=1), predictions.argmax(axis=1))
+
+from sklearn.metrics import accuracy_score
+
+acc=accuracy_score(y_test,predictions)
+
+acc
+
+new_input=[[6.4,3.1,4.5,1.5]]
+
+new_output=dtree.predict(new_input)
+
+new_output
+
+x.shape
+
+y.shape
+
+from sklearn import tree
+plt.figure(figsize=(15,10))
+tree.plot_tree(dtree,filled=True)
+
+
+print(tree.export_text(dtree))
